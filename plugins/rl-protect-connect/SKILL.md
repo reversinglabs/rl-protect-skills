@@ -35,19 +35,17 @@ Use this skill when the user wants to connect rl-protect to a Spectra Assure acc
 
 ```bash
 rl-protect server connect \
-            --rl-token={token} \
-            --save-token
+            --rl-token={token}
 ```
 
 With a named connection (use when the user wants to manage multiple connections):
 
 ```bash
 rl-protect server connect {connection-id} \
-            --rl-token={token} \
-            --save-token
+            --rl-token={token}
 ```
 
-**Always include `--save-token`** so the token is persisted to the config file and does not need to be supplied on every scan.
+The token is always persisted to the config file and does not need to be supplied on every scan.
 
 ---
 
@@ -64,8 +62,7 @@ rl-protect server connect {connection-id} \
 rl-protect server connect \
             --rl-server={portal-url} \
             --rl-org={organisation} \
-            --rl-token={token} \
-            --save-token
+            --rl-token={token}
 ```
 
 With an optional group and named connection:
@@ -75,11 +72,8 @@ rl-protect server connect {connection-id} \
             --rl-server={portal-url} \
             --rl-org={organisation} \
             --rl-group={group} \
-            --rl-token={token} \
-            --save-token
+            --rl-token={token}
 ```
-
-**Always include `--save-token`** so the token is persisted to the config file.
 
 ---
 
@@ -91,8 +85,7 @@ Use the same flags as `connect`. The `connection-id` must match the existing con
 
 ```bash
 rl-protect server update {connection-id} \
-            --rl-token={new-token} \
-            --save-token
+            --rl-token={new-token}
 ```
 
 ---
@@ -181,7 +174,7 @@ Then report the result to the user in this format:
 
 ### General rules
 
-- Always use `--save-token`. Never run a connect command without it.
+- The token is always saved implicitly — do not pass `--save-token`.
 - Never store, repeat, or summarise a token value in any response.
 - If the user supplies a token with an unrecognised prefix, ask them to confirm whether it is a Community (`rlcmm-*`) or Enterprise (`rls3c-*`) token before proceeding.
 - If `rl-protect server list` shows an existing connection with the same ID, warn the user before running `connect` and suggest using `update` instead.
