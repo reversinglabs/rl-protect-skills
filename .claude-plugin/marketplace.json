@@ -11,9 +11,10 @@
       "name": "rl-protect-install",
       "description": "Installs the rl-protect CLI from PyPI and configures it for first use. Use when setting up rl-protect for the first time or when rl-protect is not found on PATH.",
       "source": {
-        "type": "github",
-        "repo": "ReversingLabs/rl-protect-skills",
-        "path": "plugins/rl-protect-install"
+        "source": "git-subdir",
+        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
+        "path": "plugins/rl-protect-install",
+        "ref": "main"
       },
       "version": "1.0.0",
       "category": "security",
@@ -30,9 +31,10 @@
       "name": "rl-protect-connect",
       "description": "Connects rl-protect to a Spectra Assure Community or Enterprise Portal account. Use when setting up rl-protect, adding or updating a server connection, or providing an API token.",
       "source": {
-        "type": "github",
-        "repo": "ReversingLabs/rl-protect-skills",
-        "path": "plugins/rl-protect-connect"
+        "source": "git-subdir",
+        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
+        "path": "plugins/rl-protect-connect",
+        "ref": "main"
       },
       "version": "1.0.0",
       "category": "security",
@@ -48,9 +50,10 @@
       "name": "rl-protect-scan",
       "description": "Scans packages and manifest files for supply chain risk before dependency changes are made. Use when adding packages, updating versions, or editing manifest files.",
       "source": {
-        "type": "github",
-        "repo": "ReversingLabs/rl-protect-skills",
-        "path": "plugins/rl-protect-scan"
+        "source": "git-subdir",
+        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
+        "path": "plugins/rl-protect-scan",
+        "ref": "main"
       },
       "version": "1.0.0",
       "category": "security",
@@ -67,9 +70,10 @@
       "name": "rl-protect-interpret",
       "description": "Interprets rl-protect JSON reports to answer questions about vulnerabilities, malware, behavior indicators, policy violations, overrides, governance blocks, and dependency graphs.",
       "source": {
-        "type": "github",
-        "repo": "ReversingLabs/rl-protect-skills",
-        "path": "plugins/rl-protect-interpret"
+        "source": "git-subdir",
+        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
+        "path": "plugins/rl-protect-interpret",
+        "ref": "main"
       },
       "version": "1.0.0",
       "category": "security",
@@ -86,9 +90,10 @@
       "name": "rl-protect-edit-profile",
       "description": "Creates and modifies rl-protect scanning profiles. Use when configuring assessment severity levels, adding governance allow/block rules, or managing policy overrides.",
       "source": {
-        "type": "github",
-        "repo": "ReversingLabs/rl-protect-skills",
-        "path": "plugins/rl-protect-edit-profile"
+        "source": "git-subdir",
+        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
+        "path": "plugins/rl-protect-edit-profile",
+        "ref": "main"
       },
       "version": "1.0.0",
       "category": "security",
