@@ -1,9 +1,10 @@
 {
   "name": "rl-protect-install",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Installs the rl-protect CLI from PyPI and configures it for first use. Use when setting up rl-protect for the first time or when rl-protect is not found on PATH.",
   "author": {
     "name": "ReversingLabs",
+    "email": "secure.software@reversinglabs.com",
     "url": "https://www.reversinglabs.com"
   },
   "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
@@ -16,6 +17,5 @@
     "rl-protect",
     "setup",
     "install"
-  ],
-  "skills": "./"
+  ]
 }

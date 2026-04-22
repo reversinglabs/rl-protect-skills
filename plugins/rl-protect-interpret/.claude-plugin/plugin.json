@@ -1,9 +1,10 @@
 {
   "name": "rl-protect-interpret",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Interprets rl-protect JSON reports to answer questions about vulnerabilities, malware, behavior indicators, policy violations, overrides, governance blocks, and dependency graphs.",
   "author": {
     "name": "ReversingLabs",
+    "email": "secure.software@reversinglabs.com",
     "url": "https://www.reversinglabs.com"
   },
   "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
@@ -16,6 +17,5 @@
     "malware",
     "cve",
     "reporting"
-  ],
-  "skills": "./"
+  ]
 }

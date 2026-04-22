@@ -1,9 +1,10 @@
 {
   "name": "rl-protect-scan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Supply chain security gate. Must be invoked before any install command, manifest edit, or package recommendation.",
   "author": {
     "name": "ReversingLabs",
+    "email": "secure.software@reversinglabs.com",
     "url": "https://www.reversinglabs.com"
   },
   "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
@@ -16,6 +17,5 @@
     "npm",
     "pypi",
     "rubygems"
-  ],
-  "skills": "./"
+  ]
 }

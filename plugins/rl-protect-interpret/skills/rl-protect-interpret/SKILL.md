@@ -27,10 +27,10 @@ If you find yourself reading the JSON file, writing parsing code, or interpretin
 
 ### Script location
 
-Scripts are in the `scripts/` folder relative to the skill:
+Scripts are in `${CLAUDE_SKILL_DIR}/scripts/`:
 
 ```
-scripts/
+${CLAUDE_SKILL_DIR}/scripts/
   summarize.py      — full report overview, all packages
   interpret.py      — targeted extraction by task
   deptree.py        — dependency tree visualization
@@ -54,7 +54,7 @@ All scripts support `--json` to output structured JSON instead of formatted term
 Prints a compact Markdown summary of every package in the report: recommendation, all six assessment statuses, override flags, and scan errors. Use this when the user wants an overview or has not asked for a specific task.
 
 ```bash
-python scripts/summarize.py [report.json] [--json] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/summarize.py [report.json] [--json] --no-error-code
 ```
 
 #### interpret.py
@@ -62,7 +62,7 @@ python scripts/summarize.py [report.json] [--json] --no-error-code
 Extracts a specific slice of the report. Use this for all targeted tasks. Always prefer this over summarize.py when the user asks a specific question.
 
 ```bash
-python scripts/interpret.py <task> [--package <purl>] [--report <path>] [--json] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/interpret.py <task> [--package <purl>] [--report <path>] [--json] --no-error-code
 ```
 
 Use `--package` to filter output to a specific package when the user names one.
@@ -72,7 +72,7 @@ Use `--package` to filter output to a specific package when the user names one.
 Renders package dependency relationships as an indented Unicode tree. Each node shows the package PURL, recommendation, and worst assessment status. Cycles are detected and marked. Unscanned dependencies are flagged. Use this when the user asks to see, visualize, or explore the dependency tree.
 
 ```bash
-python scripts/deptree.py [--package <purl>] [--report <path>] [--depth <n>] [--reverse] [--json] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/deptree.py [--package <purl>] [--report <path>] [--depth <n>] [--reverse] [--json] --no-error-code
 ```
 
 - `--package` roots the tree at a specific package (PURL substring match). Without it, trees are printed for all top-level packages (those not listed as a dependency of another).
@@ -87,10 +87,10 @@ Compares behaviors between two versions of the same package to detect suspicious
 
 ```bash
 # Two versions in one report (scanned together):
-python scripts/diff-behavior.py --package <name> [--report <path>] [--json] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/diff-behavior.py --package <name> [--report <path>] [--json] --no-error-code
 
 # Two separate reports (old version vs new version):
-python scripts/diff-behavior.py --package <name> --old-report <old_path> --new-report <new_path> [--json] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/diff-behavior.py --package <name> --old-report <old_path> --new-report <new_path> [--json] --no-error-code
 ```
 
 - `--package` is required. Matches by package name (substring match, case-insensitive).
@@ -107,7 +107,7 @@ python scripts/diff-behavior.py --package <name> --old-report <old_path> --new-r
 rl-protect scan pkg:npm/example@1.0.0,pkg:npm/example@2.0.0 --no-tracking --save-report=rl-protect.report.json
 
 # 2. Compare behaviors
-python scripts/diff-behavior.py --package example --report rl-protect.report.json --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/diff-behavior.py --package example --report rl-protect.report.json --no-error-code
 ```
 
 ---
@@ -134,9 +134,9 @@ Map every user request to a script invocation using this table. There are no exc
 For a specific package risk summary, run all three:
 
 ```bash
-python scripts/interpret.py vulnerabilities --package <purl> [--report <path>] --no-error-code
-python scripts/interpret.py malware --package <purl> [--report <path>] --no-error-code
-python scripts/interpret.py overrides --package <purl> [--report <path>] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/interpret.py vulnerabilities --package <purl> [--report <path>] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/interpret.py malware --package <purl> [--report <path>] --no-error-code
+python ${CLAUDE_SKILL_DIR}/scripts/interpret.py overrides --package <purl> [--report <path>] --no-error-code
 ```
 
 > **Always pass `--no-error-code`** when invoking scripts. This suppresses non-zero exit codes from REJECT findings so the terminal does not color the output as an error. Exit code 2 (file not found, invalid JSON) is never suppressed.
