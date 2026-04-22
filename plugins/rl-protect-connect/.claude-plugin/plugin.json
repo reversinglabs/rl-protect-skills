@@ -1,9 +1,10 @@
 {
   "name": "rl-protect-connect",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Connects rl-protect to a Spectra Assure Community or Enterprise Portal account. Use when setting up rl-protect, adding or updating a server connection, or providing an API token.",
   "author": {
     "name": "ReversingLabs",
+    "email": "secure.software@reversinglabs.com",
     "url": "https://www.reversinglabs.com"
   },
   "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
@@ -15,6 +16,5 @@
     "spectra-assure",
     "rl-protect",
     "setup"
-  ],
-  "skills": "./"
+  ]
 }

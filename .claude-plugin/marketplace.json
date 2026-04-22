@@ -2,21 +2,18 @@
   "name": "rl-protect-skills",
   "owner": {
     "name": "ReversingLabs",
-    "url": "https://www.reversinglabs.com"
+    "email": "secure.software@reversinglabs.com"
   },
-  "description": "Supply chain security skills for rl-protect. Scan dependencies for malware, vulnerabilities, and policy violations before they enter your project.",
-  "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
+  "metadata": {
+    "version": "1.0.1",
+    "description": "Supply chain security skills for rl-protect. Scan dependencies for malware, vulnerabilities, and policy violations before they enter your project.",
+    "homepage": "https://github.com/ReversingLabs/rl-protect-skills"
+  },
   "plugins": [
     {
       "name": "rl-protect-install",
       "description": "Installs the rl-protect CLI from PyPI and configures it for first use. Use when setting up rl-protect for the first time or when rl-protect is not found on PATH.",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
-        "path": "plugins/rl-protect-install",
-        "ref": "main"
-      },
-      "version": "1.0.0",
+      "source": "./plugins/rl-protect-install",
       "category": "security",
       "tags": [
         "supply-chain",
@@ -30,13 +27,7 @@
     {
       "name": "rl-protect-connect",
       "description": "Connects rl-protect to a Spectra Assure Community or Enterprise Portal account. Use when setting up rl-protect, adding or updating a server connection, or providing an API token.",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
-        "path": "plugins/rl-protect-connect",
-        "ref": "main"
-      },
-      "version": "1.0.0",
+      "source": "./plugins/rl-protect-connect",
       "category": "security",
       "tags": [
         "supply-chain",
@@ -49,13 +40,7 @@
     {
       "name": "rl-protect-scan",
       "description": "Scans packages and manifest files for supply chain risk before dependency changes are made. Use when adding packages, updating versions, or editing manifest files.",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
-        "path": "plugins/rl-protect-scan",
-        "ref": "main"
-      },
-      "version": "1.0.0",
+      "source": "./plugins/rl-protect-scan",
       "category": "security",
       "tags": [
         "supply-chain",
@@ -69,13 +54,7 @@
     {
       "name": "rl-protect-interpret",
       "description": "Interprets rl-protect JSON reports to answer questions about vulnerabilities, malware, behavior indicators, policy violations, overrides, governance blocks, and dependency graphs.",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
-        "path": "plugins/rl-protect-interpret",
-        "ref": "main"
-      },
-      "version": "1.0.0",
+      "source": "./plugins/rl-protect-interpret",
       "category": "security",
       "tags": [
         "supply-chain",
@@ -89,13 +68,7 @@
     {
       "name": "rl-protect-edit-profile",
       "description": "Creates and modifies rl-protect scanning profiles. Use when configuring assessment severity levels, adding governance allow/block rules, or managing policy overrides.",
-      "source": {
-        "source": "git-subdir",
-        "url": "https://github.com/ReversingLabs/rl-protect-skills.git",
-        "path": "plugins/rl-protect-edit-profile",
-        "ref": "main"
-      },
-      "version": "1.0.0",
+      "source": "./plugins/rl-protect-edit-profile",
       "category": "security",
       "tags": [
         "supply-chain",

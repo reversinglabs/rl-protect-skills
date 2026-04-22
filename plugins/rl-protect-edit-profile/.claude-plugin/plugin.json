@@ -1,9 +1,10 @@
 {
   "name": "rl-protect-edit-profile",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Creates and modifies rl-protect scanning profiles. Use when configuring assessment severity levels, adding governance allow/block rules, or managing policy overrides.",
   "author": {
     "name": "ReversingLabs",
+    "email": "secure.software@reversinglabs.com",
     "url": "https://www.reversinglabs.com"
   },
   "homepage": "https://github.com/ReversingLabs/rl-protect-skills",
@@ -15,6 +16,5 @@
     "policy",
     "governance",
     "configuration"
-  ],
-  "skills": "./"
+  ]
 }
