@@ -167,31 +167,79 @@ def rpad(s: str, width: int) -> str:
     return s + " " * max(0, width - dw(s))
 
 
+def wrap_text(s: str, max_width: int) -> list[str]:
+    """Wrap s into lines of at most max_width display columns, breaking at spaces."""
+    if dw(s) <= max_width:
+        return [s]
+    words = s.split(" ")
+    lines: list[str] = []
+    current, current_w = "", 0
+    for word in words:
+        word_w = dw(word)
+        if not current:
+            current, current_w = word, word_w
+        elif current_w + 1 + word_w <= max_width:
+            current += " " + word
+            current_w += 1 + word_w
+        else:
+            lines.append(current)
+            current, current_w = word, word_w
+    if current:
+        lines.append(current)
+    return lines or [s]
+
+
 # ---------------------------------------------------------------------------
 # Box-drawing table renderer
 # ---------------------------------------------------------------------------
 
-def render_table(headers: list[str], rows: list[list[str]]) -> list[str]:
-    """Render a multi-column Unicode box-drawing table with dynamic column widths."""
+def render_table(headers: list[str], rows: list[list[str]],
+                 col_max_widths: list[int | None] | None = None) -> list[str]:
+    """Render a multi-column Unicode box-drawing table with dynamic column widths.
+
+    col_max_widths: per-column max display width; None entries mean unlimited.
+    Cells that exceed their column's max width are wrapped across multiple lines.
+    """
     n = len(headers)
+    maxw: list[int | None] = list(col_max_widths) + [None] * n if col_max_widths else [None] * n
+
     col_w = [dw(h) for h in headers]
     for row in rows:
         for i, cell in enumerate(row[:n]):
-            col_w[i] = max(col_w[i], dw(str(cell)))
+            raw = dw(str(cell))
+            col_w[i] = max(col_w[i], raw if maxw[i] is None else min(raw, maxw[i]))
 
     def hdiv(left, mid, right):
         return left + mid.join("─" * (w + 2) for w in col_w) + right
 
-    def data_row(cells):
+    def single_line(cells):
         padded = list(cells) + [""] * (n - len(cells))
         parts  = [f" {rpad(str(c), w)} " for c, w in zip(padded, col_w)]
         return "│" + "│".join(parts) + "│"
 
+    def multi_lines(cells):
+        padded  = list(cells) + [""] * (n - len(cells))
+        wrapped = [
+            wrap_text(str(c), maxw[i]) if maxw[i] is not None else [str(c)]
+            for i, c in enumerate(padded[:n])
+        ]
+        height = max(len(w) for w in wrapped)
+        lines  = []
+        for line_i in range(height):
+            parts = [
+                f" {rpad(w[line_i] if line_i < len(w) else '', col_w[i])} "
+                for i, w in enumerate(wrapped)
+            ]
+            lines.append("│" + "│".join(parts) + "│")
+        return lines
+
+    uses_wrapping = any(m is not None for m in maxw[:n])
+
     out = [hdiv("┌", "┬", "┐")]
-    out.append(data_row(headers))
+    out.append(single_line(headers))
     out.append(hdiv("├", "┼", "┤"))
     for row in rows:
-        out.append(data_row(row))
+        out.extend(multi_lines(row) if uses_wrapping else [single_line(row)])
     out.append(hdiv("└", "┴", "┘"))
     return out
 
@@ -221,6 +269,9 @@ def task_vulnerabilities(packages: list) -> int:
             any_reject = True
         if not vulns:
             continue
+        active_vulns = {k: v for k, v in vulns.items() if "TRIAGED" not in v.get("exploit", [])}
+        if not active_vulns:
+            continue
 
         found_any = True
         ov_entry  = analysis.get("assessment", {}).get("vulnerabilities", {})
@@ -235,11 +286,12 @@ def task_vulnerabilities(packages: list) -> int:
         print(pkg_header(purl, rec))
 
         rows = []
-        for cve_id, vuln in vulns.items():
+        for cve_id, vuln in active_vulns.items():
             score = vuln.get("cvss", {}).get("baseScore", 0.0)
             flags = ", ".join(vuln.get("exploit", [])) or "—"
             rows.append([cve_id, f"{score:.2f} ({cvss_label(score)})", flags, vuln.get("summary", "—")])
-        for line in render_table(["CVE / GHSA", "CVSS", "Exploit flags", "Summary"], rows):
+        for line in render_table(["CVE / GHSA", "CVSS", "Exploit flags", "Summary"], rows,
+                                  col_max_widths=[None, None, None, 60]):
             print(line)
 
         if ov:
@@ -286,7 +338,8 @@ def task_indicators(packages: list) -> int:
                 [ind_id, ind.get("description", "—"), str(ind.get("occurrences", "—"))]
                 for ind_id, ind in indicators.items()
             ]
-            for line in render_table(["ID", "Description", "Occurrences"], rows):
+            for line in render_table(["ID", "Description", "Occurrences"], rows,
+                                      col_max_widths=[None, 60, None]):
                 print(line)
         else:
             print("  (No indicators found.)")
@@ -314,7 +367,8 @@ def task_indicators(packages: list) -> int:
                 ov     = v.get("override")
                 ov_str = f"Yes — by {ov.get('audit', {}).get('author', '—')}" if ov else "No"
                 rows.append([rule_id, v.get("description", "—"), str(v.get("violations", "—")), ov_str])
-            for line in render_table(["Rule", "Description", "Count", "Override"], rows):
+            for line in render_table(["Rule", "Description", "Count", "Override"], rows,
+                                      col_max_widths=[None, 60, None, None]):
                 print(line)
         else:
             print("  (No policy violations found.)")
@@ -377,7 +431,8 @@ def task_malware(packages: list) -> int:
                 [b.get("status", "—"), b.get("reason", "—"), b.get("author", "—"), format_date(b.get("timestamp", ""))]
                 for b in blocks
             ]
-            for line in render_table(["Status", "Reason", "Author", "Date"], rows):
+            for line in render_table(["Status", "Reason", "Author", "Date"], rows,
+                                      col_max_widths=[None, 60, None, None]):
                 print(line)
 
         if report_url:
@@ -435,7 +490,8 @@ def task_overrides(packages: list) -> int:
                     format_date(audit.get("timestamp", "")),
                     audit.get("reason", "—"),
                 ])
-            for line in render_table(["Assessment", "Original", "Override", "Author", "Date", "Reason"], rows):
+            for line in render_table(["Assessment", "Original", "Override", "Author", "Date", "Reason"], rows,
+                                      col_max_widths=[None, None, None, None, None, 60]):
                 print(line)
 
         if policy_overrides:
@@ -453,7 +509,8 @@ def task_overrides(packages: list) -> int:
                     format_date(audit.get("timestamp", "")),
                     audit.get("reason", "—"),
                 ])
-            for line in render_table(["Rule", "Original", "Override", "Author", "Date", "Reason"], rows):
+            for line in render_table(["Rule", "Original", "Override", "Author", "Date", "Reason"], rows,
+                                      col_max_widths=[None, None, None, None, None, 60]):
                 print(line)
 
     if first_out:
@@ -485,7 +542,8 @@ def task_governance(packages: list) -> int:
             [g.get("status", "—"), g.get("reason", "—"), g.get("author", "—"), format_date(g.get("timestamp", ""))]
             for g in governance
         ]
-        for line in render_table(["Status", "Reason", "Author", "Date"], rows):
+        for line in render_table(["Status", "Reason", "Author", "Date"], rows,
+                                  col_max_widths=[None, 60, None, None]):
             print(line)
 
     if first_out:
@@ -596,6 +654,9 @@ def task_vulnerabilities_json(packages: list) -> dict:
             any_reject = True
         if not vulns:
             continue
+        active_vulns = {k: v for k, v in vulns.items() if "TRIAGED" not in v.get("exploit", [])}
+        if not active_vulns:
+            continue
         ov_entry = analysis.get("assessment", {}).get("vulnerabilities", {})
         ov = meaningful_override(ov_entry)
         pkg_data = {
@@ -610,7 +671,7 @@ def task_vulnerabilities_json(packages: list) -> dict:
                     "exploit_flags": vuln.get("exploit", []),
                     "summary": vuln.get("summary", ""),
                 }
-                for cve_id, vuln in vulns.items()
+                for cve_id, vuln in active_vulns.items()
             ],
             "override": None,
         }

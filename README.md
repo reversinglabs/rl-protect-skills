@@ -1,6 +1,6 @@
 # rl-protect-skills
 
-Claude Code skills for [Spectra Assure](https://www.reversinglabs.com/products/software-supply-chain-security) — supply chain security powered by [rl-protect](https://docs.secure.software/).
+Claude Code skills for [Spectra Assure Community](https://secure.software) — supply chain security powered by [rl-protect](https://docs.secure.software/).
 
 These skills teach Claude Code to scan open source dependencies for malware, vulnerabilities, and policy violations before they enter your project, and to interpret the results.
 

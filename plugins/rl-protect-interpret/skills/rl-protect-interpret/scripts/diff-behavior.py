@@ -109,30 +109,79 @@ def rpad(s: str, width: int) -> str:
     return s + " " * max(0, width - dw(s))
 
 
+def wrap_text(s: str, max_width: int) -> list[str]:
+    """Wrap s into lines of at most max_width display columns, breaking at spaces."""
+    if dw(s) <= max_width:
+        return [s]
+    words = s.split(" ")
+    lines: list[str] = []
+    current, current_w = "", 0
+    for word in words:
+        word_w = dw(word)
+        if not current:
+            current, current_w = word, word_w
+        elif current_w + 1 + word_w <= max_width:
+            current += " " + word
+            current_w += 1 + word_w
+        else:
+            lines.append(current)
+            current, current_w = word, word_w
+    if current:
+        lines.append(current)
+    return lines or [s]
+
+
 # ---------------------------------------------------------------------------
 # Box-drawing table renderer
 # ---------------------------------------------------------------------------
 
-def render_table(headers: list[str], rows: list[list[str]]) -> list[str]:
+def render_table(headers: list[str], rows: list[list[str]],
+                 col_max_widths: list[int | None] | None = None) -> list[str]:
+    """Render a multi-column Unicode box-drawing table with dynamic column widths.
+
+    col_max_widths: per-column max display width; None entries mean unlimited.
+    Cells that exceed their column's max width are wrapped across multiple lines.
+    """
     n = len(headers)
+    maxw: list[int | None] = list(col_max_widths) + [None] * n if col_max_widths else [None] * n
+
     col_w = [dw(h) for h in headers]
     for row in rows:
         for i, cell in enumerate(row[:n]):
-            col_w[i] = max(col_w[i], dw(str(cell)))
+            raw = dw(str(cell))
+            col_w[i] = max(col_w[i], raw if maxw[i] is None else min(raw, maxw[i]))
 
     def hdiv(left, mid, right):
         return left + mid.join("─" * (w + 2) for w in col_w) + right
 
-    def data_row(cells):
+    def single_line(cells):
         padded = list(cells) + [""] * (n - len(cells))
-        parts = [f" {rpad(str(c), w)} " for c, w in zip(padded, col_w)]
+        parts  = [f" {rpad(str(c), w)} " for c, w in zip(padded, col_w)]
         return "│" + "│".join(parts) + "│"
 
+    def multi_lines(cells):
+        padded  = list(cells) + [""] * (n - len(cells))
+        wrapped = [
+            wrap_text(str(c), maxw[i]) if maxw[i] is not None else [str(c)]
+            for i, c in enumerate(padded[:n])
+        ]
+        height = max(len(w) for w in wrapped)
+        lines  = []
+        for line_i in range(height):
+            parts = [
+                f" {rpad(w[line_i] if line_i < len(w) else '', col_w[i])} "
+                for i, w in enumerate(wrapped)
+            ]
+            lines.append("│" + "│".join(parts) + "│")
+        return lines
+
+    uses_wrapping = any(m is not None for m in maxw[:n])
+
     out = [hdiv("┌", "┬", "┐")]
-    out.append(data_row(headers))
+    out.append(single_line(headers))
     out.append(hdiv("├", "┼", "┤"))
     for row in rows:
-        out.append(data_row(row))
+        out.extend(multi_lines(row) if uses_wrapping else [single_line(row)])
     out.append(hdiv("└", "┴", "┘"))
     return out
 
@@ -493,14 +542,16 @@ def print_diff(old_pkg: dict, new_pkg: dict) -> int:
         new_risks = True
         print("  [+] New policy violations")
         rows = [[r[0], r[1], r[2]] for r in pv_added]
-        for line in render_table(["Rule", "Description", "Violations"], rows):
+        for line in render_table(["Rule", "Description", "Violations"], rows,
+                                  col_max_widths=[None, 60, None]):
             print(line)
 
     if pv_removed:
         print()
         print("  [-] Resolved policy violations")
         rows = [[r[0], r[1], r[2]] for r in pv_removed]
-        for line in render_table(["Rule", "Description", "Violations"], rows):
+        for line in render_table(["Rule", "Description", "Violations"], rows,
+                                  col_max_widths=[None, 60, None]):
             print(line)
 
     if pv_changed:
@@ -515,7 +566,8 @@ def print_diff(old_pkg: dict, new_pkg: dict) -> int:
                 f"{old_icon} {STATUS_LABEL.get(old_s, old_s)} ({old_c})",
                 f"{new_icon} {STATUS_LABEL.get(new_s, new_s)} ({new_c})",
             ])
-        for line in render_table(["Rule", "Description", "Old", "New"], rows):
+        for line in render_table(["Rule", "Description", "Old", "New"], rows,
+                                  col_max_widths=[None, 60, None, None]):
             print(line)
 
     if not pv_added and not pv_removed and not pv_changed:
@@ -529,21 +581,24 @@ def print_diff(old_pkg: dict, new_pkg: dict) -> int:
         new_risks = True
         print("  [+] New indicators (not present in old version)")
         rows = [[i[0], i[1], i[2]] for i in ind_added]
-        for line in render_table(["ID", "Description", "Occurrences"], rows):
+        for line in render_table(["ID", "Description", "Occurrences"], rows,
+                                  col_max_widths=[None, 60, None]):
             print(line)
 
     if ind_removed:
         print()
         print("  [-] Removed indicators (no longer present)")
         rows = [[i[0], i[1], i[2]] for i in ind_removed]
-        for line in render_table(["ID", "Description", "Occurrences"], rows):
+        for line in render_table(["ID", "Description", "Occurrences"], rows,
+                                  col_max_widths=[None, 60, None]):
             print(line)
 
     if ind_changed:
         print()
         print("  [~] Changed indicator occurrences")
         rows = [[i[0], i[1], i[2], i[3]] for i in ind_changed]
-        for line in render_table(["ID", "Description", "Old count", "New count"], rows):
+        for line in render_table(["ID", "Description", "Old count", "New count"], rows,
+                                  col_max_widths=[None, 60, None, None]):
             print(line)
 
     if not ind_added and not ind_removed and not ind_changed:
@@ -588,7 +643,8 @@ def print_diff(old_pkg: dict, new_pkg: dict) -> int:
             score = vuln.get("cvss", {}).get("baseScore", 0.0)
             flags = ", ".join(vuln.get("exploit", [])) or "—"
             rows.append([cve_id, f"{score:.2f} ({cvss_label(score)})", flags, vuln.get("summary", "—")])
-        for line in render_table(["CVE / GHSA", "CVSS", "Exploit flags", "Summary"], rows):
+        for line in render_table(["CVE / GHSA", "CVSS", "Exploit flags", "Summary"], rows,
+                                  col_max_widths=[None, None, None, 60]):
             print(line)
 
     if vuln_fixed:
@@ -598,7 +654,8 @@ def print_diff(old_pkg: dict, new_pkg: dict) -> int:
         for cve_id, vuln in vuln_fixed:
             score = vuln.get("cvss", {}).get("baseScore", 0.0)
             rows.append([cve_id, f"{score:.2f} ({cvss_label(score)})", vuln.get("summary", "—")])
-        for line in render_table(["CVE / GHSA", "CVSS", "Summary"], rows):
+        for line in render_table(["CVE / GHSA", "CVSS", "Summary"], rows,
+                                  col_max_widths=[None, None, 60]):
             print(line)
 
     if not vuln_added and not vuln_fixed:
