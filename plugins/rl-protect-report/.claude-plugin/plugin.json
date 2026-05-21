@@ -1,7 +1,7 @@
 {
-  "name": "rl-protect-edit-profile",
-  "version": "1.0.2",
-  "description": "Creates and modifies rl-protect scanning profiles. Use when configuring assessment severity levels, adding governance allow/block rules, or managing policy overrides.",
+  "name": "rl-protect-report",
+  "version": "1.0.0",
+  "description": "Converts an rl-protect JSON report into a structured Markdown document with per-package findings, vulnerability tables, and a prioritized version update plan.",
   "author": {
     "name": "ReversingLabs",
     "email": "secure.software@reversinglabs.com",
@@ -13,8 +13,9 @@
   "keywords": [
     "supply-chain",
     "security",
-    "policy",
-    "governance",
-    "configuration"
+    "vulnerabilities",
+    "malware",
+    "cve",
+    "reporting"
   ]
 }

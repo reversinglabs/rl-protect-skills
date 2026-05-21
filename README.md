@@ -8,6 +8,8 @@ These skills teach Claude Code to scan open source dependencies for malware, vul
 
 ## Skills
 
+Skills are invoked interactively in Claude Code conversations.
+
 ### `rl-protect-install`
 Installs the rl-protect CLI from PyPI and configures it for first use. Handles Python and pip detection, installation, PATH verification, and hands off to `rl-protect-connect` on completion.
 
@@ -18,10 +20,13 @@ Connects rl-protect to a Spectra Assure Community (free) or Spectra Assure Porta
 Scans packages and manifest files for supply chain risk before dependency changes are made. Supports single packages, CSV lists, and full manifest scans. Presents findings as a structured report inline in Claude Code.
 
 ### `rl-protect-interpret`
-Interprets saved `rl-protect.report.json` files to answer questions about vulnerabilities, malware, behavior indicators, policy violations, overrides, governance blocks, and dependency trees. Supports forward and reverse dependency tree visualization to trace how a package entered the tree.
+Interprets saved `rl-protect.report.json` files to answer questions about vulnerabilities, malware, behavior indicators, policy violations, overrides, governance blocks, and dependency trees. Supports forward and reverse dependency tree visualization.
 
 ### `rl-protect-edit-profile`
 Creates and modifies rl-protect scanning profiles. Supports configuring assessment severity levels, adding governance allow/block rules, and managing policy overrides with a full audit trail.
+
+### `rl-protect-report`
+Generates structured Markdown reports from `rl-protect.report.json` scan output. Supports three templates — `concise` (executive summary), `expanded` (full findings with vulnerability tables), and `verbose` (complete audit trail).
 
 ---
 
@@ -44,11 +49,15 @@ Creates and modifies rl-protect scanning profiles. Supports configuring assessme
 ### Step 2 — Install the skills you need
 
 ```bash
+# Core scanning skills
 /plugin install rl-protect-install@rl-protect-skills
 /plugin install rl-protect-connect@rl-protect-skills
 /plugin install rl-protect-scan@rl-protect-skills
 /plugin install rl-protect-interpret@rl-protect-skills
 /plugin install rl-protect-edit-profile@rl-protect-skills
+
+# Report generation
+/plugin install rl-protect-report@rl-protect-skills
 ```
 
 ### Step 3 — Activate
@@ -136,12 +145,17 @@ rl-protect-skills/
     ├── rl-protect-interpret/
     │   ├── .claude-plugin/
     │   │   └── plugin.json
-    │   ├── SKILL.md
-    │   └── scripts/
-    │       ├── summarize.py
-    │       ├── interpret.py
-    │       └── deptree.py
-    └── rl-protect-edit-profile/
+    │   └── skills/rl-protect-interpret/
+    │       ├── SKILL.md
+    │       └── scripts/
+    │           ├── summarize.py        # Compact scan summary
+    │           ├── interpret.py        # Per-assessment detail
+    │           ├── deptree.py          # Dependency tree visualization
+    │           └── diff-behavior.py    # Behavioral diff between versions
+    ├── rl-protect-edit-profile/
+    └── rl-protect-report/
+        └── skills/rl-protect-report/scripts/
+            └── make_report.py          # Markdown report from scan report
 ```
 
 Each plugin follows the same structure: a `.claude-plugin/plugin.json` manifest and a `skills/{name}/SKILL.md` instruction file.

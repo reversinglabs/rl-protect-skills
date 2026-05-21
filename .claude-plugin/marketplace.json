@@ -82,6 +82,21 @@
         "governance",
         "configuration"
       ]
+    },
+    {
+      "name": "rl-protect-report",
+      "version": "1.0.0",
+      "description": "Converts an rl-protect JSON report into a structured Markdown document with per-package findings, vulnerability tables, and a prioritized version update plan.",
+      "source": "./plugins/rl-protect-report",
+      "category": "security",
+      "tags": [
+        "supply-chain",
+        "security",
+        "vulnerabilities",
+        "malware",
+        "cve",
+        "reporting"
+      ]
     }
   ]
 }

@@ -107,19 +107,19 @@ governance.community
 
 ### Policy overrides
 
-Overrides suppress or downgrade specific policy rule violations by their SQ-prefixed rule ID.
+Overrides change the effective status of specific policy rule violations by their rule ID.
 
 ```
-overrides.{SQxxxxx}
+overrides.{SQxxxxx | THxxxxx}
   .enabled                         — true to activate the override
-  .blocker                         — the status to apply instead: pass | warning
+  .blocker                         — the status to apply instead: pass | fail
   .apply_to[]                      — scope: "organization" | "group" | "any"
   .audit.author
   .audit.timestamp                 — must use current timestamp in ISO-8601 format
   .audit.reason
 ```
 
-Setting `blocker` to `pass` means the rule never blocks a scan. Setting it to `warning` downgrades a failure to a warning.
+Setting `blocker` to `pass` means the rule never blocks a scan. Setting it to `fail` elevates a warning to a failure.
 
 ---
 
