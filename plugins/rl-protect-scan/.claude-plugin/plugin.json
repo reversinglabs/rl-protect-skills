@@ -1,7 +1,7 @@
 {
   "name": "rl-protect-scan",
   "version": "1.0.1",
-  "description": "Supply chain security gate. Must be invoked before any install command, manifest edit, or package recommendation.",
+  "description": "Scans packages and manifest files for supply chain risk before dependency changes are made. Use when adding packages, updating versions, or editing manifest files.",
   "author": {
     "name": "ReversingLabs",
     "email": "secure.software@reversinglabs.com",

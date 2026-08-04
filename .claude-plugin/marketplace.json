@@ -6,8 +6,7 @@
   },
   "metadata": {
     "version": "1.0.0",
-    "description": "Supply chain security skills for rl-protect. Scan dependencies for malware, vulnerabilities, and policy violations before they enter your project.",
-    "homepage": "https://github.com/ReversingLabs/rl-protect-skills"
+    "description": "Supply chain security skills for rl-protect. Scan dependencies for malware, vulnerabilities, and policy violations before they enter your project."
   },
   "plugins": [
     {
@@ -71,7 +70,7 @@
     },
     {
       "name": "rl-protect-edit-profile",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "description": "Creates and modifies rl-protect scanning profiles. Use when configuring assessment severity levels, adding governance allow/block rules, or managing policy overrides.",
       "source": "./plugins/rl-protect-edit-profile",
       "category": "security",

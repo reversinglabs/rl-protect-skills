@@ -32,7 +32,7 @@ Generates structured Markdown reports from `rl-protect.report.json` scan output.
 
 ## Requirements
 
-- [Claude Code](https://claude.ai/download) version 1.0.33 or later
+- [Claude Code](https://claude.ai/download) version 2.0 or later (plugin marketplace support)
 - Python 3.8 or later and pip (required for `rl-protect-install`)
 - A [Spectra Assure Community](https://secure.software) account (free) or Spectra Assure Portal (enterprise) license
 
@@ -77,10 +77,10 @@ Enable auto-update through the `/plugin` interface, or update manually:
 ### Verifying installation
 
 ```bash
-/skills
+/plugin list
 ```
 
-All installed `rl-protect-*` skills should appear in the list.
+All installed `rl-protect-*` plugins should appear in the list. Run `/plugin` and open the **Installed** tab to see the skills each one contributes.
 
 ---
 
@@ -164,11 +164,13 @@ Each plugin follows the same structure: a `.claude-plugin/plugin.json` manifest 
 
 ## Supported ecosystems
 
-| Ecosystem | Manifest files |
-|---|---|
-| npm | `package.json` |
-| PyPI | `requirements.txt`, `pyproject.toml`, `setup.cfg` |
-| RubyGems | `Gemfile`, `gemspec` |
+| Ecosystem | Manifest files | Lock files |
+|---|---|---|
+| npm | `package.json` | `package-lock.json`, `pnpm-lock.yaml` |
+| PyPI | `requirements.txt`, `pyproject.toml`, `setup.cfg` | `poetry.lock`, `uv.lock` |
+| RubyGems | `Gemfile`, `gemspec` | `Gemfile.lock` |
+
+Scanning a lock file assesses the exact resolved versions the project installs, so prefer it over the source manifest when one exists.
 
 ---
 
